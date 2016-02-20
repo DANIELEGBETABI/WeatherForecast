@@ -1,0 +1,453 @@
+<html>
+	<head>
+		
+		<title>Weather Forecast Search</title>
+		  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">	
+			<link rel="stylesheet" type="text/css" href="WeatherForecast.css">
+			
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		 <script src="http://code.jquery.com/jquery.min.js"></script>
+		<script src="jquery-validation-1.14.0/lib/jquery.js"></script>
+		<script src="jquery-validation-1.14.0/dist/jquery.validate.js"></script>
+		
+			<script src="http://openlayers.org/api/OpenLayers.js"></script>	
+		<script src="js/bootstrap.min.js"></script>
+			
+		<script src="WeatherForecast.js"></script>	
+	
+		
+		<script src="http://momentjs.com/downloads/moment.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.4.1/moment-timezone-with-data.js"></script>
+		  
+	
+		
+		<script >
+
+		// Jquery validate and ajaxcall
+		$(document).ready(function() 
+		{
+			$("#myFormid").validate( 
+			{
+				rules:
+				{
+                    StreetAddress: 
+					 {
+                        required: 
+                        {
+                            depends:function()
+                            {
+                                 $(this).val($.trim($(this).val()));
+                                 return true;
+                            }
+                        }
+                    },
+                    City:
+					{
+                        required: 
+                        {
+                            depends:function()
+                            {
+                                 $(this).val($.trim($(this).val()));
+                                 return true;
+                            }
+                        }
+                    }	
+				},
+				messages:
+				{
+					StreetAddress: "Please enter the street address.",
+					City: "Please enter the city.",
+					State: "Please select a state."
+				},
+				errorElement: "label",
+	
+			    submitHandler: 
+					function()
+					{    
+						var str = $( "form" ).serialize();
+
+						
+						$.ajax(
+						{  
+							type: 'GET',
+							dataType: "json",
+							url: 'http://ngsforecastapp-env.elasticbeanstalk.com',
+							data: str,
+							success: function(data) 
+							{
+
+							clearfields();
+							$("#RightNow").addClass('active');							
+							$("#Rightnowfix").addClass('active');
+							$("#Next24Hours").removeClass('active');							
+							$("#Next24Hoursfix").removeClass('active');
+							$("#Next7Days").removeClass('active');							
+							$("#Next7Daysfix").removeClass('active');
+							
+								var StreetAddress = $('input#StreetAddress').val();
+								var City = $('input#City').val();
+								var State = $('#State option:selected').val();
+								var Degree = $("input[type='radio'][name='Degree']:checked").val();
+								
+								//First get all the data as previous 
+								//Weather ,heading, temperature and icon 
+								var weathericon = data.currently.icon;
+								var temperature = data.currently.temperature;
+								temperature = Math.round(temperature); 
+								var temperatureunit;
+								if (Degree=="si")
+									temperatureunit =  "°C" ;
+								else
+									temperatureunit = "°F" ;
+								
+								var windspeedunit;
+								if (Degree=="us")  { windspeedunit = "mph";} else { windspeedunit = "m/s";}
+								var visiblityunit;
+								if (Degree=="us")  { visiblityunit = "mi";} else { visiblityunit = "km";}	
+								var PressureUnit;
+								if (Degree=="us")  { PressureUnit = "mb";} else { PressureUnit = "hPa";}
+										
+								//Max and min temp
+								var MaxTemperature =  data.daily.data[0].temperatureMax;  
+								MaxTemperature =Math.round(MaxTemperature);
+								var MinTemperature = data.daily.data[0].temperatureMin;
+								MinTemperature =Math.round(MinTemperature);
+								
+								var weathersummary = data.currently.summary;
+								//Get the weathericon details
+								var imgsrc = get_icon_url(weathericon)
+								var alt = get_alt_text(weathericon)
+								
+								//Precipitation
+									var precipitationvalue = data.currently.precipIntensity;
+									if (Degree=="si")    //Degree in celsius (SI) millimeters per hour is returned.
+										precipitationvalue = (0.0393701)* precipitationvalue ;
+									// Degree in farehiet. returned value is inches per hour
+									if( (precipitationvalue >=0 ) && ( precipitationvalue <0.002 ))
+										precipitationvalue ="None" ;
+									else if( (precipitationvalue >=0.002  ) && ( precipitationvalue <0.017 ))
+										precipitationvalue ="Very Light" ;
+									else if( (precipitationvalue >=0.017 ) && ( precipitationvalue <0.1 ))
+										precipitationvalue ="Light" ;
+									else if( (precipitationvalue >=0.1 ) && ( precipitationvalue <0.4 ))
+										precipitationvalue ="Moderate" ;
+									else if( (precipitationvalue >=0.4 ) )
+										precipitationvalue ="Heavy" ;	
+									//Chance of Rain
+									var chanceofrain = ((data.currently.precipProbability)==undefined)? "N.A" : Math.round((data.currently.precipProbability)*100);
+									//Wind Speed
+									var windspeed = ((data.currently.windSpeed)==undefined)? "N.A" : (data.currently.windSpeed).toFixed(2);
+	
+									//, Dew Point
+									var dewpoint = ((data.currently.dewPoint)==undefined)? "N.A" : (data.currently.dewPoint).toFixed(2);
+									
+									//Humidity 
+									var humidity = ((data.currently.humidity)==undefined)? "N.A" : Math.round((data.currently.humidity)*100);
+								
+									//Visibility
+									var visiblity = ((data.currently.visibility)==undefined)? "N.A" : (data.currently.visibility).toFixed(2);
+
+									//Sunrise
+									var sunriseunixtime = data.daily.data[0].sunriseTime;
+									var returnedtimezone= data.timezone;
+								    var formattedsunriseTime = convert_time(sunriseunixtime, returnedtimezone);
+									//Sunset
+									var sunsetunixtime = data.daily.data[0].sunsetTime;	
+									var formattedsunsetTime =convert_time(sunsetunixtime,returnedtimezone);
+									
+								
+									//update in the html
+									$("#resultcontainer").removeClass('hidden');
+									$("#resultcontainer").addClass('container');
+									
+									document.getElementById("displayimg").src = imgsrc ;
+									document.getElementById("displayimg").alt = alt ;
+									document.getElementById("displayimg").title = weathersummary ;
+									document.getElementById("displaysummary").innerHTML = weathersummary + " in " + City + ", " + State;	
+									document.getElementById("displaytemperature").innerHTML = "<span>"+ temperature +  "<sup class='sup1'>"+temperatureunit+"</sup></span>";
+									document.getElementById("displayminmaxTemperature").innerHTML = "<span style='font-weight:600; color: blue;'> L: "+ MinTemperature +"&deg " + "</span> | <span style='font-weight:600; color: green;'> H: " + MaxTemperature +"&deg " +"</span>" ;
+									
+									//STart filling the table on the 1st tab
+									
+									document.getElementById("DisplayPrecipitation").innerHTML = precipitationvalue ;
+									document.getElementById("DisplayRain").innerHTML = chanceofrain + "%";
+									document.getElementById("DisplayWind").innerHTML = windspeed + " "+windspeedunit;
+									document.getElementById("DisplayDew").innerHTML = dewpoint + temperatureunit;
+									document.getElementById("DisplayHumid").innerHTML = humidity + "%";								
+									document.getElementById("DisplayVisiblity").innerHTML = visiblity +" "+visiblityunit ;
+									document.getElementById("DisplaySunrise").innerHTML = formattedsunriseTime ;
+									document.getElementById("DisplaySunset").innerHTML = formattedsunsetTime ;
+									document.getElementById("displayfacebook").src = 'img/fb.PNG' ;
+									document.getElementById("displayfacebook").onclick = function PostToFacebook()
+									{										
+										FB.ui(
+										{
+											method: 'feed',
+											name: "Current Weather in " + City + ", " + State ,
+											link: "http://forecast.io" ,
+											description: weathersummary + ", " + temperature + temperatureunit ,
+											caption: "WEATHER INFORMATION FROM FORECAST.IO",
+											picture:imgsrc,
+										},  
+										 // callback
+										function(response) 
+										{
+											if (response && !response.error_message) 
+											{
+												alert('Posted Successfully.');
+											} 
+											else 
+											{
+												alert('Not Posted.');
+											}
+										});
+									};
+																	
+									//MapsRight
+					
+									var lat = data.latitude;
+									var lon = data.longitude;
+									generatemap(lat,lon);
+									//Tab2 data
+									generatetab2data(data,temperatureunit,returnedtimezone,windspeedunit,visiblityunit , PressureUnit);			
+									
+									
+								//Tab3 data								
+								Next7HoursDataGeneration(data,City,returnedtimezone,windspeedunit,visiblityunit,PressureUnit);
+								
+
+							}	,
+						error: function (request,error) {
+						clearfields();
+									$("#errorblock").removeClass('hidden');
+									$("#errorblock").addClass('container');
+						document.getElementById("errorblocktext").innerHTML = "Please enter a valid address whose weather data can be fetched";
+						}						
+
+						});			
+					}
+	  		});	
+
+		});			
+
+		</script>
+
+	
+	</head>
+	<body>
+
+	<div class="container nopaddingleft nopaddingright" >
+	<div class="container" id="querycontainer">
+		<h1 class="text-center"><DataDaily> Forecast Search</DataDaily> </h1> 
+
+			<div class="col-md-12 well" >
+				<form  name="myForm" id="myFormid" method="GET">
+					<div class=" form-group col-md-3   ">
+						<label class = "required " for="StreetAddress" >Street Address:</label>
+						<input name="StreetAddress" type="text" class="form-control " id="StreetAddress" placeholder="Enter street address"  />
+					</div>
+					<div class="form-group col-md-2 ">
+						<label class = "required" for="City" >City: </span>   </label>
+						<input name="City" type="text" class="form-control " id="City" placeholder="Enter the city name"  />
+					</div>
+					<div class="form-group col-md-2 ">
+						<label class = "required" for="State">State:</label>
+						<select class="form-control " id="State" name ="State" placeholder="Select your state..." required>
+							<option value="" >Select your state...</option>
+							<option value="AL" > Alabama </option>
+							<option value="AK" > Alaska </option>
+							<option value="AZ" > Arizona </option>
+							<option value="AR" > Arkansas </option>
+							<option value="CA" > California </option>
+							<option value="CO" > Colorado </option>
+							<option value="CT" > Connecticut </option>
+							<option value="DE" > Delaware </option>
+							<option value="DC" > District Of Columbia </option>
+							<option value="FL" > Florida </option>
+							<option value="GA" > Georgia </option>
+							<option value="HI" > Hawaii </option>
+							<option value="ID" > Idaho </option>
+							<option value="IL" > Illinois </option>
+							<option value="IN" > Indiana </option>				
+							<option value="IA" > Iowa </option>
+							<option value="KS" > Kansas </option>
+							<option value="KY" > Kentucky </option>		
+							<option value="LA" > Louisiana </option>
+							<option value="ME" > Maine </option>
+							<option value="MD" > Maryland </option>		
+							<option value="MA" > Massachusetts </option>
+							<option value="MI" > Michigan </option>
+							<option value="MN" > Minnesota </option>		
+							<option value="MS" > Mississippi </option>	
+							<option value="MO" > Missouri </option>	
+							<option value="MT" > Montana </option>	
+							<option value="NE" > Nebraska </option>		
+							<option value="NV" > Nevada </option>	
+							<option value="NH" > New Hampshire </option>	
+							<option value="NJ" > New Jersey </option>	
+							<option value="NM" > New Mexico </option>		
+							<option value="NY" > New York </option>	
+							<option value="NC" > North Carolina </option>	
+							<option value="ND" > North Dakota </option>	
+							<option value="OH" > Ohio </option>		
+							<option value="OK" > Oklahoma </option>	
+							<option value="OR" > Oregon </option>	
+							<option value="PA" > Pennsylvania </option>	
+							<option value="RI" > Rhode Island </option>
+							<option value="SC" > South Carolina </option>
+							<option value="SD" > South Dakota </option>
+							<option value="TN" > Tennessee </option>	
+							<option value="TX" > Texas </option>
+							<option value="UT" > Utah </option>
+							<option value="VT" > Vermont </option>
+							<option value="VA" > Virginia </option>	
+							<option value="WA" > Washington </option>
+							<option value="WV" > West Virginia </option>
+							<option value="WI" > Wisconsin </option>
+							<option value="WY" > Wyoming </option>
+						</select>	
+					</div>
+					<div class="form-group col-md-2  ">
+						<label style="display:block;" for="Degree"><span class = "required"  >Degree: </span></label>
+						<label  >
+						<input  type = "radio" name = "Degree"  value = "us" checked> 
+							Fahrenheit				
+						</label>
+						<label >
+						<input  type = "radio" name = "Degree"  value = "si" > 
+							Celsius				
+						</label>
+					</div>				
+					<div class ="valignbottom col-md-3 text-right">
+						<button type = "submit" class = " btn btn-primary "  name="submit" value="Search">
+						<span class="glyphicon glyphicon-search" ></span> Search</button>
+						<button type = "reset" class = "btn btn-default "  onclick='clearfields()'>
+						<span class=" glyphicon glyphicon-refresh" name="clear" value="Clear" ></span>   &nbsp     Clear</button>
+					</div>
+				</form>
+				<div class="row text-right" >
+					<div class="form-group col-md-4 text-right pull-right ">
+						<label>Powered by: </label>
+						<a href="http://forecast.io/" > <img src="img/forecast_logo.png " width="40%" height="10%"/></a> 
+					</div>
+				</div>
+			</div>	
+		<div class="col-md-12"><hr>	</div>	
+	</div> <!--End of query container-->
+
+	<!--Result Container-->
+	<div class="container hidden " id="resultcontainer"  >
+	<div class="row" >
+	<div class="col-md-6">
+	<!-- Nav tabs -->
+		<ul class="nav nav-tabs" >
+			<li id="Rightnowfix" class="active"><a href="#RightNow"  data-toggle="tab" >Right Now</a></li>
+			<li id="Next24Hoursfix"><a href="#Next24Hours"   data-toggle="tab" >Next 24 Hours</a></li>
+			<li id="Next7Daysfix" ><a href="#Next7Days"   data-toggle="tab" >Next 7 Days</a></li>
+		</ul>
+	</div>
+</div>	
+	<!-- Tab panes -->
+		<div class="tab-content" >
+			<!-- First tab content-->
+			<div id="RightNow" class="row tab-pane active">  
+				<div  class= "col-md-6 "	>	<!--Left side-->	
+					<!-- Start of first column before table -->
+					<div id="firstrowinfirsttab" class="row">
+						<div class="col-md-6  text-center">
+							<img class="align  " id=displayimg  "> </img>
+						</div>
+						<div class="col-md-6 text-center" >
+							<label id=displaysummary></label>
+							<div class="row vertical-align flex-center"><label class="valigntop" id=displaytemperature  style="font-size:66px;"></label></div>
+							<p class="row col-md-10 " id=displayminmaxTemperature ></p>		
+							<div class="row pull-right" style="padding-right:15px;padding-bottom:15px;"><img class="img-rounded span2" id=displayfacebook width="40px" height="40px" ></img></div>
+
+						
+						
+						</div>	
+					</div>
+					<!-- Start of table -->
+					<div class="row" >
+						<div class="col-md-12">					  
+							<table class="table table-striped ">
+								<tbody>
+								<tr><th>Precipitation </th><td id="DisplayPrecipitation"></td></tr>
+								<tr ><th>Chance of Rain</th><td id="DisplayRain"></td></tr>
+								<tr><th>Wind Speed</th><td id="DisplayWind"></td></tr>
+								<tr ><th>Dew Point</th><td id="DisplayDew"></td></tr>
+								<tr><th>Humidity</th><td id="DisplayHumid"></td></tr>
+								<tr ><th>Visibility</th><td id="DisplayVisiblity"></td></tr>
+								<tr><th>Sunrise</th><td id="DisplaySunrise"></td></tr>
+								<tr ><th>Sunset</th><td id="DisplaySunset"></td></tr>  							
+								</tbody>
+							</table>
+					</div>				
+					</div>
+				</div>
+				
+				<div id="MapsRight" class="col-md-6 " > <!--Right side-->	
+<div id="Mapthing">
+</div>				
+				</div>
+			</div><!--End of first tab-->
+						
+				
+		<!-- Second tab content-->
+			<div id="Next24Hours"  class="tab-pane mytabletab2 ">
+				<!-- Start of 2nd tab table -->			
+				<table class="table  cw-table-list">
+					<thead style="background-color:#3b5998 ;font-size:14;color:white" >
+					<tr >
+						<th class="col-md-2 " style="vertical-align:top;"> Time</th>
+						<th class="col-md-2 colwrap" style="vertical-align:top;">Summary</th>
+						<th class="col-md-2 " style="vertical-align:top;">Cloud Cover</th>
+						<th class="col-md-2 " id ="Mytemp" style="vertical-align:top;"></th>
+						<th class="col-md-2 " style="vertical-align:top;">View Details</th>
+					</tr>
+					<thead>
+					<tbody style="background-color:white" id="Next24HoursTableContents">						
+					</tbody>
+				</table>	
+			</div><!--End of second tab-->
+
+			
+			<!-- Third tab content-->
+			<div id="Next7Days"  class="tab-pane" role="tabpanel">
+				<!-- Start of 3rd tab table -->	
+				<div class="row" id="tab3">
+				<div  class="col-md-2"></div>
+					<div class="  col-md-1 pad text-center" id="Next7Days1" ></div>  
+					<div class="  text-center col-md-1 pad" id="Next7Days2" ><h5></h5></div>  
+					<div class=" text-center col-md-1 pad" id="Next7Days3" ></div>  
+					<div class="  text-center col-md-1 pad" id="Next7Days4" ></div>  
+					<div class="  text-center col-md-1 pad" id="Next7Days5" ></div>  
+					<div class=" text-center col-md-1 pad" id="Next7Days6" ></div>
+					<div class="  text-center col-md-1 pad" id="Next7Days7" ></div>
+				</div>
+
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal1 ></div>
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal2 ></div>
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal3 ></div>
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal4 ></div>
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal5 ></div>
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal6 ></div>
+				<div class="text-center modal fade " role="dialog" id=Next7DaysModal7 ></div>
+			</div><!--End of third tab-->
+			
+		</div><!--End of tab panes-->
+	</div> <!--End of result container-->
+	
+		<div class="container hidden " id="errorblock"  >
+			
+			<div class=" col-md-12 text-center alert alert-danger " id="errorblocktext">
+			</div>
+	</div>
+	
+	
+	
+	</div> <!--End of main container-->
+	</body>
+</html>

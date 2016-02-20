@@ -1,0 +1,237 @@
+
+		body 
+		{
+			background: url('img/bg.jpg');
+			background-size:cover;
+			background-attachment:fixed;
+			background-repeat :  no-repeat;
+			
+		}	
+		label
+		{
+			font-size:14;
+			color:white;
+		}
+		redthings
+		{
+			color:#FF0000;
+		}
+		.required:after 
+		{
+			content: "*";
+			font-weight: bold;
+			color: red; 
+		}
+		.valignbottom
+		{
+			padding-top:15px;
+		}
+		.valigntop
+		{
+			display: inline-block;
+			vertical-align:top;
+		}
+
+		.well
+		{
+			background-color:rgba(0,0,0,0.2);
+			border:0px;
+		
+		}
+		.form-group
+		{
+			padding-right:3px;
+			padding-left:3px;		
+		}
+		label.error
+		{
+			color:red;
+			font-weight:bold;
+		}
+		hr
+		{
+				border-width:2px;
+				margin-right:-15px;
+				margin-left:-15px;
+				margin-top:0px;
+				}
+#displayimg
+{
+	padding-top:10%;
+	padding-bottom:10%;
+	max-width:50%;
+	max-height:25%;
+	
+}
+.sup1{
+font-size: 22px;
+top: -1.3em;
+font-weight: 500;
+}
+
+		#firstrowinfirsttab
+		{
+			background-color: salmon;
+			margin-left: 0px;
+			margin-right: 0px;
+		}
+
+		.table-striped>tbody>tr:nth-child(2n)>td,
+		.table-striped>tbody>tr:nth-child(2n)>th
+		{
+			background-color: #FFCFF1;
+		}
+
+.DocumentList
+{
+    overflow-x:scroll;
+    overflow-y:hidden;
+    height:150px;
+    width:100%;
+ white-space:nowrap;
+}
+
+
+.mytabletab2  table,
+.mytabletab2 thead,
+.mytabletab2 tr,
+.mytabletab2 tbody,
+.mytabletab2 th,
+.mytabletab2 td 
+	{
+        text-align: center;
+    }
+		.nav  li a 
+		{
+			color: #3b5998;
+			background-color:white;
+			border-style:none;
+
+		}
+		.nav > li.active > a,
+		.nav > li.active > a:focus
+		 {
+			background-color: #3b5998;
+			color:white;
+			border-style:none;
+		}
+		
+		.nopaddingright {
+   padding-right: 0 ;
+   
+}
+		.nopaddingleft {
+   padding-left: 0 ;
+   
+}
+#MapsRight
+{
+ 
+    padding-right: 15px !important ;
+	height: 500px !important;
+}
+
+.bold-modal {
+    font-weight: 600;
+    padding-bottom: 10px;
+    font-size: 13px;
+}
+.bold-modal-minmaxtemp
+{
+font-weight: 200;
+padding-bottom: 10px;
+	word-wrap: break-word;
+}
+p.bold
+{
+	font-weight:bold;
+	
+	
+}
+
+.btn:focus {
+  outline: none;
+
+}
+
+.pad {
+margin-top:10px;
+margin-right:10px;
+padding-left:2px;
+padding-right:2px;}
+
+#tab3 {
+height:400px;
+color:white;
+}
+#Next7Days1 {background-color: #327DB7; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px; }
+#Next7Days2 {background-color: #EF3F3A; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px;}
+#Next7Days3 {background-color: #E98E48; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px;}
+#Next7Days4 {background-color: #A7A42F; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px;}
+#Next7Days5 {background-color: #976EA8; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px;}
+#Next7Days6 {background-color: #F47D77; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px;}
+#Next7Days7 {background-color: #CF4370; margin-right:2%;margin-left:2%;margin-top:3%;margin-bottom:3%; border-radius: 25px;}
+
+
+
+@media screen and (min-width: 992px) {
+#tab3 { 
+    background-color: black;
+    margin:0px;color:white;
+}
+    
+    #tab3 img {max-width:50px;}
+#Next7Days1 {background-color: #327DB7; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px;border-radius: 8px; }
+#Next7Days2 {background-color: #EF3F3A; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px;border-radius: 8px;}
+#Next7Days3 {background-color: #E98E48; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px;border-radius: 8px;}
+#Next7Days4 {background-color: #A7A42F; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px; border-radius: 8px;}
+#Next7Days5 {background-color: #976EA8; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px;border-radius: 8px;}
+#Next7Days6 {background-color: #F47D77; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px;border-radius: 8px;}
+#Next7Days7 {background-color: #CF4370; padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:10px;margin-top:2%;margin-bottom:2%;  margin-right:20px;margin-left:-5px;border-radius: 8px;}
+                                                                        
+}
+
+.modal-title-mine
+{
+	text-align:left;
+	font-weight:bold;
+}
+.modal-body-day-summary
+{
+	font-weight:bold;
+	font-size:20px;
+}
+.modal-icon-padding
+{
+	padding-top:15px;
+	padding-bottom:15px;
+}
+
+.cw-table-list{
+    margin:0px !important;
+    overflow: scroll;
+	overflow-x:scroll;
+	
+  }
+.table-scrollable-container
+{
+    overflow-x:scroll;
+    width: 97%;
+	padding-left: 3%;
+	
+}
+  
+  .table-scrollable{
+    overflow-x: scroll;
+}
+.colwrap{
+min-width: 10px;
+max-width: 40px;
+word-wrap: break-word;
+}
+
+
+.temp-big
+{
+	font-size : 200%;
+}
