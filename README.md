@@ -2,28 +2,15 @@
 Weather Forecast app
 
 ## Synopsis
- 
 WeatherForecast is a responsive webapp designed for Desktop, Tablet, Mobile etc.
+Enter the address of the location for the forecast of weather conditions for the address.
+Tabbed interface showing details of weather details for next 24 hours and next 7 days.
 
-## Code Example
- 
-## Synopsis
-Enter the address of the location for the forecast of weather. 
+## Motivation
+This is a part of CSCI571 course in Webtechnologies at USC.
 
-+## Code Example
+## Installation
+http://ngsforecastapp-env.elasticbeanstalk.com/index.php/WeatherForecast.html
 
-
-+## Motivation
-This is a part of CSCI571 course in Webtechnologies at USC
-
-+## Installation
-
-+## API Reference
-
-+## Tests
-
-+## Contributors
-
-+## License
-
-
+## API Reference
+Forecast.io
